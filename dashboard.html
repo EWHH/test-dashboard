@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Call Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #fff;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        main {
+            padding: 10px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        .card-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-shrink: 0;
+            width: 180px;
+        }
+
+        .card {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .card.purple {
+            background-color: #8B5CF6;
+            color: white;
+        }
+
+        .card h3 {
+            font-size: 14px;
+            margin: 0 0 5px;
+        }
+
+        .card p {
+            font-size: 18px;
+        }
+
+        .chart-section,
+        .table-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0;
+        }
+
+        .chart-section h2,
+        .table-section h2 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        canvas {
+            max-height: 180px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table thead {
+            background-color: #f0f2f5;
+        }
+
+        table th,
+        table td {
+            font-size: 12px;
+            padding: 8px;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .table-section {
+            overflow-y: auto;
+        }
+
+        .dashboard-container {
+            width: 1000px;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+            /* prevent scrolling */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            /* full viewport height */
+            background-color: #f4f6f9;
+            /* same as body background */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <div class="dashboard-container">
+            <header>
+                <h1> Call Dashboard</h1>
+            </header>
+
+            <main>
+                <section class="card-grid">
+                    <div class="card purple">
+                        <h3>Total Calls</h3>
+                        <p id="totalCall">-</p>
+                    </div>
+                    <div class="card">
+                        <h3>Welcome</h3>
+                        <p id="welcome">-</p>
+                    </div>
+                    <div class="card">
+                        <h3>Parent</h3>
+                        <p id="parent">-</p>
+                    </div>
+                    <div class="card">
+                        <h3>Interest</h3>
+                        <p id="interest">-</p>
+                    </div>
+                </section>
+
+                <section class="chart-section">
+                    <h2>Call Breakdown</h2>
+                    <canvas id="callChart" height="100"></canvas>
+                </section>
+
+                <section class="table-section">
+                    <h2>Latest Calls</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Lead ID</th>
+                                <th>Welcome Call</th>
+                                <th>Target Parent</th>
+                                <th>Product Interest</th>
+                            </tr>
+                        </thead>
+                        <tbody id="latestCallList"></tbody>
+                    </table>
+                </section>
+            </main>
+        </div>
+    </div>
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+
+</html>
