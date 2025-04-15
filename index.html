@@ -1,74 +1,772 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Call App</title>
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Widget</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f4f6f9;
-  color: #333;
-  height: 100vh;
-  overflow: hidden;
-}
+            font-family: 'Inter', sans-serif;
+            background-color: #fff;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
 
-.app-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
+        /* Widget Container */
+        .widget-container {
+            width: 800px;
+            height: 500px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
 
-.navbar {
-  background: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-around;
-}
+        /* Widget Header */
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
 
-.navbar button {
-  background: #8B5CF6;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-}
+        .widget-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
 
-.view-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 30px;
-}
+        .widget-header select {
+            padding: 5px 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            cursor: pointer;
+        }
 
-.view-section {
-  max-width: 1000px;
-  margin: 0 auto;
-}
+        .widget-header .close-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #666;
+            cursor: pointer;
+        }
 
+        /* View Container */
+        .view-container {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .view-container.active {
+            display: block;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-main {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .dashboard-card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .dashboard-card {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 150px;
+        }
+
+        .dashboard-card.purple {
+            background-color: #6B48FF;
+            color: white;
+        }
+
+        .dashboard-card h3 {
+            font-size: 12px;
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .dashboard-card p {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .dashboard-card .icon {
+            font-size: 18px;
+        }
+
+        .dashboard-chart-section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .dashboard-chart-section h2 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .dashboard-chart-section canvas {
+            max-height: 150px;
+        }
+
+        /* Leads List Styles */
+        .leads-main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            height: 100%; /* Ensure it takes the full height of the view container */
+        }
+
+        .leads-metrics {
+            display: flex;
+            gap: 10px;
+        }
+
+        .leads-metric-card {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            flex: 1;
+            text-align: center;
+        }
+
+        .leads-metric-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .leads-metric-card p {
+            font-size: 12px;
+            color: #666;
+            margin: 0;
+        }
+
+        .leads-table-section {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow-x: auto; /* Enable horizontal scrolling */
+            max-height: calc(100% - 60px); /* Adjust height to fit within the container, accounting for metrics and header */
+            overflow-y: auto; /* Enable vertical scrolling within the table section */
+        }
+
+        .leads-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .leads-table-header .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #f0f2f5;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+
+        .leads-table-header .search-bar input {
+            border: none;
+            background: none;
+            font-size: 12px;
+            outline: none;
+            width: 120px;
+        }
+
+        .leads-table-header .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .leads-table-header .actions button {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+            border: none;
+            background-color: #2ecc71;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .leads-table-header .actions button:hover {
+            background-color: #27ae60;
+        }
+
+        .leads-table {
+            width: 100%;
+            min-width: 800px;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .leads-table th, .leads-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .leads-table th {
+            background-color: #f0f2f5;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .leads-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .leads-status-false {
+            color: #e74c3c;
+            font-weight: 500;
+        }
+
+        .leads-status-true {
+            color: #27ae60;
+            font-weight: 500;
+        }
+
+        /* Leads Popup Styles */
+        #leads-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        #leads-popupForm, #leads-leadOptions {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 15px;
+            width: 300px;
+            box-shadow: 0px 6px 15px rgba(0,0,0,0.15);
+            z-index: 1000;
+            border-radius: 8px;
+            display: none;
+        }
+
+        #leads-leadOptions {
+            text-align: center;
+        }
+
+        #leads-leadOptions .title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        #leads-leadOptions .title .icon {
+            width: 20px;
+            height: 20px;
+            background-color: #4a00e0;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        #leads-leadOptions .subtitle {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        #leads-leadOptions .options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        #leads-leadOptions .option {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: 120px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        #leads-leadOptions .option:hover {
+            background-color: #f0f2f5;
+        }
+
+        #leads-leadOptions .option .icon {
+            font-size: 20px;
+            color: #4a00e0;
+            margin-bottom: 8px;
+        }
+
+        #leads-leadOptions .option span {
+            font-size: 12px;
+            color: #333;
+        }
+
+        #leads-leadOptions .cancel-btn {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        #leads-leadOptions .cancel-btn:hover {
+            background-color: #f0f2f5;
+        }
+
+        #leads-popupForm {
+            text-align: left;
+        }
+
+        #leads-popupForm .title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        #leads-popupForm .title .icon {
+            width: 20px;
+            height: 20px;
+            background-color: #4a00e0;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        #leads-leadForm label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        #leads-leadForm input {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 12px;
+            transition: border-color 0.2s ease;
+        }
+
+        #leads-leadForm input:focus {
+            border-color: #4a00e0;
+            outline: none;
+        }
+
+        #leads-leadForm .buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        #leads-leadForm .buttons button {
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+        }
+
+        #leads-leadForm .buttons .cancel-btn {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            color: #333;
+            transition: background-color 0.2s ease;
+        }
+
+        #leads-leadForm .buttons .cancel-btn:hover {
+            background-color: #f0f2f5;
+        }
+
+        #leads-leadForm .buttons .submit-btn {
+            background-color: #4a00e0;
+            color: white;
+            transition: background-color 0.2s ease;
+        }
+
+        #leads-leadForm .buttons .submit-btn:hover {
+            background-color: #3a00b8;
+        }
+
+        /* Call History Styles */
+        .call-history h1, .call-history h2 {
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .call-history #call-history-filters {
+            background-color: #fff;
+            padding: 10px 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .call-history #call-history-filters label {
+            display: flex;
+            flex-direction: column;
+            font-weight: 500;
+            color: #444;
+            font-size: 12px;
+        }
+
+        .call-history #call-history-filters select {
+            padding: 5px 8px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 12px;
+            margin-top: 5px;
+            min-width: 100px;
+        }
+
+        .call-history button#call-history-applyFilters {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 10px;
+            height: fit-content;
+        }
+
+        .call-history button#call-history-applyFilters:hover {
+            background-color: #2980b9;
+        }
+
+        .call-history table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            font-size: 12px;
+        }
+
+        .call-history th, .call-history td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        .call-history th {
+            background-color: #f0f2f5;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .call-history tr:last-child td {
+            border-bottom: none;
+        }
     </style>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="app-wrapper">
-    <nav class="navbar">
-      <button data-view="dashboard">📊 Dashboard</button>
-      
-      <button data-view="leads">🧾 Leads</button>
-      <button data-view="calls">📞 Call History</button>
-    </nav>
+    <div class="widget-container">
+        <!-- Widget Header -->
+        <div class="widget-header">
+            <h3>Activity Dashboard</h3>
+            <select id="view-selector">
+                <option value="dashboard-view">Dashboard</option>
+                <option value="leads-view">Leads List</option>
+                <option value="call-history-view">Call History</option>
+            </select>
+            <button class="close-btn" onclick="this.closest('.widget-container').style.display='none'">×</button>
+        </div>
 
-    <div class="view-container">
-      <section id="dashboardView" class="view-section"></section>
-      <section id="leadsView" class="view-section" style="display: none;"></section>
-      <section id="callsView" class="view-section" style="display: none;"></section>
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="view-container active">
+            <main class="dashboard-main">
+                <section class="dashboard-card-grid">
+                    <div class="dashboard-card purple">
+                        <span class="icon">✨</span>
+                        <div>
+                            <h3>Total Calls</h3>
+                            <p id="dashboard-totalCall">-</p>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <span class="icon">🔍</span>
+                        <div>
+                            <h3>Welcome</h3>
+                            <p id="dashboard-welcome">-</p>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <span class="icon">📈</span>
+                        <div>
+                            <h3>Parent</h3>
+                            <p id="dashboard-parent">-</p>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <span class="icon">📞</span>
+                        <div>
+                            <h3>Interest</h3>
+                            <p id="dashboard-interest">-</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="dashboard-chart-section">
+                    <h2>TOTAL INTERACTION</h2>
+                    <canvas id="dashboard-callChart"></canvas>
+                </section>
+            </main>
+        </div>
+
+        <!-- Leads List View -->
+        <div id="leads-view" class="view-container">
+            <div class="leads-main-content">
+                <div class="leads-metrics">
+                    <div class="leads-metric-card">
+                        <h3 id="leads-leadsCount">0</h3>
+                        <p>Leads</p>
+                    </div>
+                </div>
+
+                <div class="leads-table-section">
+                    <div class="leads-table-header">
+                        <div class="search-bar">
+                            <input type="text" placeholder="Search leads">
+                        </div>
+                        <div class="actions">
+                            <button id="leads-addLeadBtn">Create leads</button>
+                        </div>
+                    </div>
+                    <table id="leads-leadsTable" class="leads-table">
+                        <thead>
+                            <tr>
+                                <th>Client Name</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Contact Number</th>
+                                <th>Called</th>
+                                <th>To Call</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Overlay and Popups -->
+            <div id="leads-overlay"></div>
+
+            <!-- leadOptions Popup -->
+            <div id="leads-leadOptions">
+                <div class="title">
+                    <span class="icon">+</span>
+                    <span>Import Leads</span>
+                </div>
+                <div class="subtitle">How would you like to add leads?</div>
+                <div class="options">
+                    <div class="option" id="leads-singleLeadBtn">
+                        <div class="icon">⊞</div>
+                        <span>Add manually</span>
+                    </div>
+                    <div class="option" id="leads-bulkLeadBtn">
+                        <div class="icon">↓</div>
+                        <span>Import from file</span>
+                    </div>
+                </div>
+                <input type="file" id="leads-bulkFileInput" accept=".csv" style="display: none;">
+                <button class="cancel-btn" id="leads-cancelLeadOptionBtn">Cancel</button>
+            </div>
+
+            <!-- popupForm (Single Lead Form) -->
+            <div id="leads-popupForm">
+                <div class="title">
+                    <span class="icon">+</span>
+                    <span>Add Lead</span>
+                </div>
+                <form id="leads-leadForm">
+                    <label>Name
+                        <input type="text" name="clientName" required>
+                    </label>
+                    <label>Email
+                        <input type="email" name="email" required>
+                    </label>
+                    <label>Phone
+                        <input type="text" name="contactNumber" required>
+                    </label>
+                    <label>Address
+                        <input type="text" name="address" required>
+                    </label>
+                    <div class="buttons">
+                        <button type="button" class="cancel-btn" id="leads-cancelBtn">Cancel</button>
+                        <button type="submit" class="submit-btn">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Call History View -->
+        <div id="call-history-view" class="view-container call-history">
+            <h1>Call Records</h1>
+            <div id="call-history-filters">
+                <label>
+                    Welcome Call:
+                    <select id="call-history-filterWelcomeCall">
+                        <option value="">All</option>
+                        <option value="Success">Success</option>
+                        <option value="Failure">Failure</option>
+                    </select>
+                </label>
+                <label>
+                    Target Parent:
+                    <select id="call-history-filterTargetParent">
+                        <option value="">All</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </label>
+                <label>
+                    Interest:
+                    <select id="call-history-filterProductInterest">
+                        <option value="">All</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </label>
+                <button id="call-history-applyFilters">Apply Filters</button>
+            </div>
+            <table id="call-history-callTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Created At</th>
+                        <th>Call Name</th>
+                        <th>Phone Number</th>
+                        <th>Call Type</th>
+                        <th>Interest</th>
+                        <th>Target Parent</th>
+                        <th>Welcome Call</th>
+                        <th>Biz Owner ID</th>
+                        <th>Leads List ID</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
-  </div>
 
-  <script type="module" src="js/app.js"></script>
+    <script type="module">
+        // Import all JavaScript modules
+        import { initDashboard, fetchAndRenderReport, renderChart } from './js/dashboard.js';
+        import { fetchLeads, setupEventListeners as setupLeadsEventListeners } from './js/leads.js';
+        import { fetchCallHistory, setupFilters, renderTable } from './js/callHistory.js';
+
+        // Navigation Logic via Dropdown
+        const viewSelector = document.getElementById('view-selector');
+        const views = document.querySelectorAll('.view-container');
+
+        function switchView(targetViewId) {
+            views.forEach(view => view.classList.remove('active'));
+            const targetView = document.getElementById(targetViewId);
+            if (targetView) {
+                targetView.classList.add('active');
+            }
+        }
+
+        viewSelector.addEventListener('change', () => {
+            const viewId = viewSelector.value;
+            switchView(viewId);
+        });
+
+        // Initialize Dashboard
+        document.addEventListener('DOMContentLoaded', initDashboard);
+
+        // Initialize Leads List
+        document.addEventListener('DOMContentLoaded', () => {
+            setupLeadsEventListeners();
+            fetchLeads();
+        });
+
+        // Initialize Call History
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCallHistory();
+        });
+    </script>
 </body>
 </html>
