@@ -1,3 +1,5 @@
+import { loginAndStoreToken } from './authentication.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     // Password Show/Hide Functionality
     const passwordInput = document.getElementById('password');
@@ -9,6 +11,28 @@ document.addEventListener('DOMContentLoaded', () => {
         passwordInput.setAttribute('type', type);
         passwordIcon.classList.toggle('fa-eye-slash', type === 'password');
         passwordIcon.classList.toggle('fa-eye', type === 'text');
+    });
+
+    // Form Submission
+    const loginForm = document.getElementById('login-form');
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Signing in...';
+
+        try {
+            await loginAndStoreToken(email, password);
+            window.location.href = 'index.html';
+        } catch (err) {
+            alert('Login failed: ' + err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Sign in';
+        }
     });
 
     // Carousel Functionality

@@ -1,187 +1,814 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="widget-container">
+    <!-- Widget Header -->
+    <div class="widget-header">
+        <h3>Activity Dashboard</h3>
+        <select id="view-selector">
+            <option value="dashboard-view">Dashboard</option>
+            <option value="leads-view">Leads List</option>
+            <option value="call-history-view">Call History</option>
+        </select>
+        <button class="close-btn" onclick="this.closest('.widget-container').style.display='none'">×</button>
+    </div>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Call Dashboard</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f4f6f9;
-            color: #333;
-        }
-
-        header {
-            background-color: #fff;
-            padding: 10px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            flex-shrink: 0;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 18px;
-        }
-
-        main {
-            padding: 10px 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: row;
-            gap: 20px;
-            overflow: hidden;
-        }
-
-        .card-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            flex-shrink: 0;
-            width: 180px;
-        }
-
-        .card {
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .card.purple {
-            background-color: #8B5CF6;
-            color: white;
-        }
-
-        .card h3 {
-            font-size: 14px;
-            margin: 0 0 5px;
-        }
-
-        .card p {
-            font-size: 18px;
-        }
-
-        .chart-section,
-        .table-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 0;
-        }
-
-        .chart-section h2,
-        .table-section h2 {
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        canvas {
-            max-height: 180px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        table thead {
-            background-color: #f0f2f5;
-        }
-
-        table th,
-        table td {
-            font-size: 12px;
-            padding: 8px;
-        }
-
-        table tr:nth-child(even) {
-            background-color: #fafafa;
-        }
-
-        .table-section {
-            overflow-y: auto;
-        }
-
-        .dashboard-container {
-            width: 1000px;
-            height: 600px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            overflow: hidden;
-            /* prevent scrolling */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .dashboard-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            /* full viewport height */
-            background-color: #f4f6f9;
-            /* same as body background */
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-
-<body>
-    <div class="dashboard-wrapper">
-        <div class="dashboard-container">
-            <header>
-                <h1> Call Dashboard</h1>
-            </header>
-
-            <main>
-                <section class="card-grid">
-                    <div class="card purple">
-                        <h3>Total Calls</h3>
-                        <p id="totalCall">-</p>
+    <!-- Container for Views -->
+    <div id="view-content">
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="view-container active">
+            <main class="dashboard-main">
+                <section class="dashboard-card-grid">
+                    <div class="dashboard-card purple">
+                        <span class="icon">✨</span>
+                        <div>
+                            <h3>Total Calls</h3>
+                            <p id="dashboard-totalCall">-</p>
+                        </div>
                     </div>
-                    <div class="card">
-                        <h3>Welcome</h3>
-                        <p id="welcome">-</p>
+                    <div class="dashboard-card">
+                        <span class="icon">🔍</span>
+                        <div>
+                            <h3>Welcome</h3>
+                            <p id="dashboard-welcome">-</p>
+                        </div>
                     </div>
-                    <div class="card">
-                        <h3>Parent</h3>
-                        <p id="parent">-</p>
+                    <div class="dashboard-card">
+                        <span class="icon">📈</span>
+                        <div>
+                            <h3>Parent</h3>
+                            <p id="dashboard-parent">-</p>
+                        </div>
                     </div>
-                    <div class="card">
-                        <h3>Interest</h3>
-                        <p id="interest">-</p>
+                    <div class="dashboard-card">
+                        <span class="icon">📞</span>
+                        <div>
+                            <h3>Interest</h3>
+                            <p id="dashboard-interest">-</p>
+                        </div>
                     </div>
                 </section>
 
-                <section class="chart-section">
-                    <h2>Call Breakdown</h2>
-                    <canvas id="callChart" height="100"></canvas>
+                <section class="dashboard-chart-section">
+                    <h2>TOTAL INTERACTION</h2>
+                    <canvas id="dashboard-callChart"></canvas>
                 </section>
 
-                <section class="table-section">
-                    <h2>Latest Calls</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Lead ID</th>
-                                <th>Welcome Call</th>
-                                <th>Target Parent</th>
-                                <th>Product Interest</th>
-                            </tr>
-                        </thead>
-                        <tbody id="latestCallList"></tbody>
-                    </table>
+                <section class="dashboard-latest-call-section">
+                    <h2>LATEST CALLS</h2>
+                    <div class="dashboard-latest-call-table-section">
+                        <table id="dashboard-latest-call-table" class="dashboard-latest-call-table">
+                            <thead>
+                                <tr>
+                                    <th>Lead ID</th>
+                                    <th>Welcome Call</th>
+                                    <th>Target Parent</th>
+                                    <th>Product Interest</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </section>
             </main>
         </div>
     </div>
-    <script type="module" src="js/dashboard.js"></script>
-</body>
 
-</html>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+    
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+    
+        /* Widget Container */
+        .widget-container {
+            width: 800px;
+            height: 500px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+    
+        /* Widget Header */
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+    
+        .widget-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+    
+        .widget-header select {
+            padding: 5px 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            cursor: pointer;
+        }
+    
+        .widget-header .close-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #666;
+            cursor: pointer;
+        }
+    
+        /* View Container */
+        .view-container {
+            display: none;
+            flex: 1;
+            padding: 15px;
+            overflow: auto; /* Allow overflow to enable scrolling */
+        }
+    
+        .view-container.active {
+            display: flex;
+            flex-direction: column;
+        }
+    
+        /* Dashboard Styles */
+        .dashboard-main {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            height: 100%;
+        }
+    
+        .dashboard-card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    
+        .dashboard-card {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 150px;
+        }
+    
+        .dashboard-card.purple {
+            background-color: #6B48FF;
+            color: white;
+        }
+    
+        .dashboard-card h3 {
+            font-size: 12px;
+            margin: 0;
+            font-weight: normal;
+        }
+    
+        .dashboard-card p {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+        }
+    
+        .dashboard-card .icon {
+            font-size: 18px;
+        }
+    
+        .dashboard-chart-section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            flex: 1;
+        }
+    
+        .dashboard-chart-section h2 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+    
+        .dashboard-chart-section canvas {
+            max-height: 150px;
+        }
+    
+        /* Latest Call Section */
+        .dashboard-latest-call-section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+    
+        .dashboard-latest-call-section h2 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+    
+        .dashboard-latest-call-table-section {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+    
+        .dashboard-latest-call-table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+    
+        .dashboard-latest-call-table th, .dashboard-latest-call-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            white-space: nowrap;
+        }
+    
+        .dashboard-latest-call-table th {
+            background-color: #f0f2f5;
+            font-weight: 600;
+            color: #444;
+        }
+    
+        .dashboard-latest-call-table tr:last-child td {
+            border-bottom: none;
+        }
+    
+        /* Leads List Styles */
+        .leads-main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            height: 100%;
+        }
+    
+        .leads-metrics {
+            display: flex;
+            gap: 15px;
+            /*flex-shrink: 0;*/ /* Prevent metrics from shrinking */
+        }
+    
+        .leads-metric-card {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            flex: 1;
+            text-align: left;
+        }
+    
+        .leads-metric-card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+    
+        .leads-metric-card p {
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+            text-transform: uppercase;
+        }
+    
+        .leads-table-section {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: calc(100% - 100px); /* Increased to account for taller headers */
+            /*flex: 1;*/
+        }
+    
+        .leads-table-section::-webkit-scrollbar {
+            /*width: 8px;*/
+            height: 8px;
+        }
+    
+        .leads-table-section::-webkit-scrollbar-track {
+            background: #f0f2f5;
+            border-radius: 4px;
+        }
+    
+        .leads-table-section::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+    
+        .leads-table-section::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+    
+        .leads-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            background-color: #fff;
+            /*flex-shrink: 0;*/ /* Prevent header from shrinking */
+        }
+    
+        .leads-table-header .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #f0f2f5;
+            padding: 8px 15px;
+            border-radius: 20px;
+            flex: 1;
+            max-width: 300px;
+        }
+    
+        .leads-table-header .search-bar input {
+            border: none;
+            background: none;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+        }
+    
+        .leads-table-header .actions {
+            display: flex;
+            gap: 10px;
+        }
+    
+        .leads-table-header .actions button {
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 20px;
+            border: none;
+            background-color: #28a745;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 500;
+        }
+    
+        .leads-table-header .actions button:hover {
+            background-color: #218838;
+        }
+    
+        .leads-table {
+            width: 100%;
+            min-width: 1000px;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+    
+        .leads-table th, .leads-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            white-space: nowrap;
+        }
+    
+        .leads-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            font-size: 12px;
+            /*position: sticky;
+            top: 0;
+            z-index: 1;*/
+        }
+    
+        .leads-table tr:last-child td {
+            border-bottom: none;
+        }
+    
+        .leads-table .lead-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    
+        .leads-table .lead-name .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+        }
+    
+        .leads-table .lead-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: flex-start;
+        }
+    
+        .leads-table .lead-contact .email {
+            color: #333;
+        }
+    
+        .leads-table .lead-contact .phone {
+            color: #666;
+            font-size: 12px;
+        }
+    
+        .leads-table .lead-owner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    
+        .leads-table .lead-owner .avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+        }
+    
+        .leads-table .address {
+            max-width: 200px;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+    
+        /* Leads Popup Styles */
+        #leads-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+    
+        #leads-popupForm, #leads-leadOptions {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            width: 320px;
+            box-shadow: 0px 6px 15px rgba(0,0,0,0.15);
+            z-index: 1000;
+            border-radius: 8px;
+            display: none;
+        }
+    
+        #leads-leadOptions {
+            text-align: center;
+        }
+    
+        #leads-leadOptions .title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+    
+        #leads-leadOptions .title .icon {
+            width: 24px;
+            height: 24px;
+            background-color: #28a745;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    
+        #leads-leadOptions .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+    
+        #leads-leadOptions .options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+    
+        #leads-leadOptions .option {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: 120px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+    
+        #leads-leadOptions .option:hover {
+            background-color: #f0f2f5;
+        }
+    
+        #leads-leadOptions .option .icon {
+            font-size: 24px;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+    
+        #leads-leadOptions .option span {
+            font-size: 14px;
+            color: #333;
+        }
+    
+        #leads-leadOptions .cancel-btn {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+    
+        #leads-leadOptions .cancel-btn:hover {
+            background-color: #f0f2f5;
+        }
+    
+        #leads-popupForm {
+            text-align: left;
+        }
+    
+        #leads-popupForm .title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+    
+        #leads-popupForm .title .icon {
+            width: 24px;
+            height: 24px;
+            background-color: #28a745;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    
+        #leads-leadForm label {
+            display: block;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+    
+        #leads-leadForm input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+    
+        #leads-leadForm input:focus {
+            border-color: #28a745;
+            outline: none;
+        }
+    
+        #leads-leadForm .buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    
+        #leads-leadForm .buttons button {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+        }
+    
+        #leads-leadForm .buttons .cancel-btn {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            color: #333;
+            transition: background-color 0.2s ease;
+        }
+    
+        #leads-leadForm .buttons .cancel-btn:hover {
+            background-color: #f0f2f5;
+        }
+    
+        #leads-leadForm .buttons .submit-btn {
+            background-color: #28a745;
+            color: white;
+            transition: background-color 0.2s ease;
+        }
+    
+        #leads-leadForm .buttons .submit-btn:hover {
+            background-color: #218838;
+        }
+    
+        /* Call History Styles */
+        .call-history-main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            height: 100%;
+        }
+    
+        .call-history-metrics {
+            display: flex;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+    
+        .call-history-metric-card {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            flex: 1;
+            text-align: left;
+        }
+    
+        .call-history-metric-card h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+    
+        .call-history-metric-card p {
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+            text-transform: uppercase;
+        }
+    
+        .call-history-table-section {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: calc(100% - 150px);
+            flex: 1;
+        }
+    
+        .call-history-table-section::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+    
+        .call-history-table-section::-webkit-scrollbar-track {
+            background: #f0f2f5;
+            border-radius: 4px;
+        }
+    
+        .call-history-table-section::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+    
+        .call-history-table-section::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+    
+        .call-history-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            background-color: #fff;
+            flex-shrink: 0;
+        }
+    
+        .call-history-table-header .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #f0f2f5;
+            padding: 8px 15px;
+            border-radius: 20px;
+            flex: 1;
+            max-width: 300px;
+        }
+    
+        .call-history-table-header .search-bar input {
+            border: none;
+            background: none;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+        }
+    
+        .call-history-table-header .actions {
+            display: flex;
+            gap: 10px;
+        }
+    
+        .call-history-table-header .actions button {
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 20px;
+            border: none;
+            background-color: #28a745;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 500;
+        }
+    
+        .call-history-table-header .actions button:hover {
+            background-color: #218838;
+        }
+    
+        .call-history-table {
+            width: 100%;
+            min-width: 1000px;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+    
+        .call-history-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            font-size: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+    
+        .call-history-table th, .call-history-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            white-space: nowrap;
+        }
+    
+        .call-history-table tr:last-child td {
+            border-bottom: none;
+        }
+    
+        .call-history-table-header .filters {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    
+        .call-history-table-header .filters label {
+            display: flex;
+            flex-direction: column;
+            font-weight: 500;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+    
+        .call-history-table-header .filters select {
+            padding: 5px 8px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 12px;
+            margin-top: 5px;
+            min-width: 100px;
+        }
+    </style>
+</div>

@@ -1,117 +1,156 @@
-import { loginAndStoreToken, getCookie } from './authentication.js';
+import { authState, checkResponse } from "./authentication.js";
 
-async function initDashboard() {
-    let token = getCookie('authToken');
-    if (!token) {
-        try {
-            token = await loginAndStoreToken('larry@oracle.com', 'abcd1234');
-        } catch (e) {
-            alert('Authentication failed');
+console.log("dashboard.js loaded - Version with authState (2025-04-18)");
+
+function initDashboard() {
+    console.log("Initializing dashboard...");
+    fetchAndRenderReport();
+}
+
+async function fetchAndRenderReport() {
+    try {
+        if (!authState.isAuthenticated || !authState.token) {
+            console.log("Not authenticated, redirecting to login");
+            window.location.href = "login.html";
             return;
         }
-    }
 
-    fetchAndRenderReport(token);
-}
-
-async function fetchAndRenderReport(token) {
-    try {
-        const res = await fetch('https://x8ki-letl-twmt.n7.xano.io/api:ulG9WHn0/dashboardReport', {
-            headers: {
-                'Authorization': `Bearer ${token}`
+        const response = await fetch(
+            "https://x8ki-letl-twmt.n7.xano.io/api:ulG9WHn0/dashboardReport",
+            {
+                headers: {
+                    Authorization: `Bearer ${authState.token}`,
+                },
             }
-        });
+        );
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message);
+        checkResponse(response);
 
-        // Fill cards with updated IDs
-        document.getElementById('dashboard-totalCall').textContent = data.totalCall.toLocaleString();
-        document.getElementById('dashboard-welcome').textContent = data.welcome.toLocaleString();
-        document.getElementById('dashboard-parent').textContent = data.parent.toLocaleString();
-        document.getElementById('dashboard-interest').textContent = data.interest.toLocaleString();
+        if (!response.ok) {
+            throw new Error(`HTTP error ${response.status}`);
+        }
 
-        // Draw chart
-        renderChart(data);
+        const report = await response.json();
+        console.log("Dashboard report fetched:", report);
+
+        // Update DOM elements with null checks
+        const totalCallEl = document.getElementById("dashboard-totalCall");
+        const welcomeEl = document.getElementById("dashboard-welcome");
+        const parentEl = document.getElementById("dashboard-parent");
+        const interestEl = document.getElementById("dashboard-interest");
+
+        if (totalCallEl) {
+            totalCallEl.textContent = report.totalCall || "-";
+        } else {
+            console.error("Element #dashboard-totalCall not found");
+        }
+
+        if (welcomeEl) {
+            welcomeEl.textContent =
+                report.welcome !== undefined ? report.welcome : "-";
+        } else {
+            console.error("Element #dashboard-welcome not found");
+        }
+
+        if (parentEl) {
+            parentEl.textContent =
+                report.parent !== undefined ? report.parent : "-";
+        } else {
+            console.error("Element #dashboard-parent not found");
+        }
+
+        if (interestEl) {
+            interestEl.textContent =
+                report.interest !== undefined ? report.interest : "-";
+        } else {
+            console.error("Element #dashboard-interest not found");
+        }
+
+        // Update latest call table
+        const tbody = document.querySelector(
+            "#dashboard-latest-call-table tbody"
+        );
+        if (tbody) {
+            tbody.innerHTML = "";
+            if (report.latestCallList && report.latestCallList.length > 0) {
+                report.latestCallList.forEach((call) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${call.lead_id || "-"}</td>
+                        <td>${call.welcomeCall || "-"}</td>
+                        <td>${call.targetParent || "-"}</td>
+                        <td>${call.productInterest || "-"}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                tbody.innerHTML =
+                    '<tr><td colspan="4">No recent calls</td></tr>';
+            }
+        } else {
+            console.error("Table body for #dashboard-latest-call-table not found");
+        }
+
+        // Render chart
+        renderChart(report);
     } catch (err) {
-        console.error(err);
-        alert('Failed to load dashboard data.');
+        console.error("Failed to fetch dashboard report:", err);
     }
 }
 
-function renderChart(data) {
-    const ctx = document.getElementById('dashboard-callChart').getContext('2d');
+function renderChart(report) {
+    const ctx = document.getElementById("dashboard-callChart")?.getContext("2d");
+    if (!ctx) {
+        console.error("Canvas #dashboard-callChart not found");
+        return;
+    }
 
-    // Calculate the maximum value in the dataset to help with scaling
-    const maxWelcome = Math.max(data.welcome, data.welcome * 0.8, data.welcome * 0.6);
-    const maxParent = Math.max(data.parent, data.parent * 0.9, data.parent * 0.7);
-    const maxValue = Math.max(maxWelcome, maxParent);
+    if (!report.chartData) {
+        console.warn("No chartData provided in report, using placeholder data");
+        ctx.canvas.parentElement.innerHTML = '<p>No interaction data available</p>';
+        return;
+    }
+
+    const labels = report.chartData?.labels || [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+    ];
+    const data = report.chartData?.data || [0, 0, 0, 0, 0, 0];
 
     new Chart(ctx, {
-        type: 'bar',
+        type: "line",
         data: {
-            labels: ['Month 1', 'Month 2', 'Month 3'],
+            labels: labels,
             datasets: [
                 {
-                    label: 'Welcome',
-                    data: [data.welcome, data.welcome * 0.8, data.welcome * 0.6], // Simulated variation
-                    backgroundColor: '#34D399',
-                    barThickness: 20,
+                    label: "Interactions",
+                    data: data,
+                    borderColor: "#6B48FF",
+                    backgroundColor: "rgba(107, 72, 255, 0.1)",
+                    fill: true,
+                    tension: 0.4,
                 },
-                {
-                    label: 'Parent',
-                    data: [data.parent, data.parent * 0.9, data.parent * 0.7], // Simulated variation
-                    backgroundColor: '#6B48FF',
-                    barThickness: 20,
-                },
-                {
-                    label: 'Interest',
-                    data: [data.interest, data.interest * 0.7, data.interest * 0.5], // Simulated variation
-                    backgroundColor: '#34D399',
-                    barThickness: 20,
-                    hidden: true, // Hide Interest to match the two-dataset style of the target
-                }
-            ]
+            ],
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        padding: 20,
-                    }
-                }
+                    display: false,
+                },
             },
             scales: {
-                x: {
-                    grid: {
-                        display: false,
-                    }
-                },
                 y: {
                     beginAtZero: true,
-                    suggestedMax: Math.max(10, maxValue * 1.2), // Ensure a minimum scale for small values
-                    ticks: {
-                        // Let Chart.js automatically determine the step size
-                        stepSize: undefined,
-                        // Display raw numbers instead of "K" format
-                        callback: function(value) {
-                            return value;
-                        }
-                    },
-                    grid: {
-                        drawBorder: false,
-                    }
-                }
-            }
-        }
+                },
+            },
+        },
     });
 }
 
 export { initDashboard, fetchAndRenderReport, renderChart };
-
-// Run setup on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', initDashboard);
