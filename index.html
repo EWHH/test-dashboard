@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard Widget</title>
+    <!-- Suppress favicon request -->
+    <link rel="icon" href="data:;base64,=">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -14,7 +16,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #fff;
+            background-color: #f5f7fa;
             color: #333;
             display: flex;
             justify-content: center;
@@ -144,56 +146,124 @@
             max-height: 150px;
         }
 
+        /* Latest Call Section */
+        .dashboard-latest-call-section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .dashboard-latest-call-section h2 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .dashboard-latest-call-table-section {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .dashboard-latest-call-table {
+            width: 100%;
+            min-width: 600px;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .dashboard-latest-call-table th, .dashboard-latest-call-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .dashboard-latest-call-table th {
+            background-color: #f0f2f5;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .dashboard-latest-call-table tr:last-child td {
+            border-bottom: none;
+/* as: 150px;*/
+        }
+
         /* Leads List Styles */
         .leads-main-content {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            height: 100%; /* Ensure it takes the full height of the view container */
+            gap: 15px;
+            height: 100%;
         }
 
         .leads-metrics {
             display: flex;
-            gap: 10px;
+            gap: 15px;
         }
 
         .leads-metric-card {
             background-color: #fff;
-            padding: 10px;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
             flex: 1;
-            text-align: center;
+            text-align: left;
         }
 
         .leads-metric-card h3 {
-            font-size: 18px;
+            font-size: 24px;
             font-weight: 600;
             color: #333;
             margin-bottom: 5px;
         }
 
         .leads-metric-card p {
-            font-size: 12px;
+            font-size: 14px;
             color: #666;
             margin: 0;
+            text-transform: uppercase;
         }
 
         .leads-table-section {
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            overflow-x: auto; /* Enable horizontal scrolling */
-            max-height: calc(100% - 60px); /* Adjust height to fit within the container, accounting for metrics and header */
-            overflow-y: auto; /* Enable vertical scrolling within the table section */
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: calc(100% - 100px);
+        }
+
+        .leads-table-section::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .leads-table-section::-webkit-scrollbar-track {
+            background: #f0f2f5;
+            border-radius: 4px;
+        }
+
+        .leads-table-section::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        .leads-table-section::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
         }
 
         .leads-table-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 10px;
+            padding: 10px 15px;
             border-bottom: 1px solid #eee;
+            background-color: #fff;
         }
 
         .leads-table-header .search-bar {
@@ -201,69 +271,112 @@
             align-items: center;
             gap: 8px;
             background-color: #f0f2f5;
-            padding: 5px 10px;
-            border-radius: 15px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            flex: 1;
+            max-width: 300px;
         }
 
         .leads-table-header .search-bar input {
             border: none;
             background: none;
-            font-size: 12px;
+            font-size: 14px;
             outline: none;
-            width: 120px;
+            width: 100%;
         }
 
         .leads-table-header .actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
         }
 
         .leads-table-header .actions button {
-            padding: 5px 10px;
-            font-size: 12px;
-            border-radius: 4px;
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 20px;
             border: none;
-            background-color: #2ecc71;
+            background-color: #28a745;
             color: #fff;
             cursor: pointer;
+            font-weight: 500;
         }
 
         .leads-table-header .actions button:hover {
-            background-color: #27ae60;
+            background-color: #218838;
         }
 
         .leads-table {
             width: 100%;
-            min-width: 800px;
+            min-width: 1000px;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         .leads-table th, .leads-table td {
-            padding: 8px 10px;
+            padding: 12px 15px;
             border-bottom: 1px solid #eee;
             text-align: left;
             white-space: nowrap;
         }
 
         .leads-table th {
-            background-color: #f0f2f5;
+            background-color: #f8f9fa;
             font-weight: 600;
-            color: #444;
+            color: #666;
+            text-transform: uppercase;
+            font-size: 12px;
         }
 
         .leads-table tr:last-child td {
             border-bottom: none;
         }
 
-        .leads-status-false {
-            color: #e74c3c;
-            font-weight: 500;
+        .leads-table .lead-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .leads-status-true {
-            color: #27ae60;
-            font-weight: 500;
+        .leads-table .lead-name .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+        }
+
+        .leads-table .lead-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: flex-start;
+        }
+
+        .leads-table .lead-contact .email {
+            color: #333;
+        }
+
+        .leads-table .lead-contact .phone {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .leads-table .lead-owner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .leads-table .lead-owner .avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+        }
+
+        .leads-table .address {
+            max-width: 200px;
+            white-space: normal;
+            word-wrap: break-word;
         }
 
         /* Leads Popup Styles */
@@ -284,8 +397,8 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: white;
-            padding: 15px;
-            width: 300px;
+            padding: 20px;
+            width: 320px;
             box-shadow: 0px 6px 15px rgba(0,0,0,0.15);
             z-index: 1000;
             border-radius: 8px;
@@ -300,35 +413,35 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         #leads-leadOptions .title .icon {
-            width: 20px;
-            height: 20px;
-            background-color: #4a00e0;
+            width: 24px;
+            height: 24px;
+            background-color: #28a745;
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         #leads-leadOptions .subtitle {
-            font-size: 12px;
-            color: #333;
-            margin-bottom: 15px;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
         }
 
         #leads-leadOptions .options {
             display: flex;
             gap: 15px;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         #leads-leadOptions .option {
@@ -347,13 +460,13 @@
         }
 
         #leads-leadOptions .option .icon {
-            font-size: 20px;
-            color: #4a00e0;
-            margin-bottom: 8px;
+            font-size: 24px;
+            color: #28a745;
+            margin-bottom: 10px;
         }
 
         #leads-leadOptions .option span {
-            font-size: 12px;
+            font-size: 14px;
             color: #333;
         }
 
@@ -361,8 +474,8 @@
             background-color: #fff;
             border: 1px solid #ddd;
             padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 12px;
+            border-radius: 20px;
+            font-size: 14px;
             color: #333;
             cursor: pointer;
             transition: background-color 0.2s ease;
@@ -380,59 +493,59 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         #leads-popupForm .title .icon {
-            width: 20px;
-            height: 20px;
-            background-color: #4a00e0;
+            width: 24px;
+            height: 24px;
+            background-color: #28a745;
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         #leads-leadForm label {
             display: block;
-            margin-bottom: 10px;
-            font-size: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
             font-weight: 500;
             color: #333;
         }
 
         #leads-leadForm input {
             width: 100%;
-            padding: 8px 10px;
+            padding: 10px;
             margin-top: 5px;
             box-sizing: border-box;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 14px;
             transition: border-color 0.2s ease;
         }
 
         #leads-leadForm input:focus {
-            border-color: #4a00e0;
+            border-color: #28a745;
             outline: none;
         }
 
         #leads-leadForm .buttons {
             display: flex;
             justify-content: flex-end;
-            gap: 8px;
-            margin-top: 15px;
+            gap: 10px;
+            margin-top: 20px;
         }
 
         #leads-leadForm .buttons button {
             padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 12px;
+            border-radius: 20px;
+            font-size: 14px;
             cursor: pointer;
             border: none;
         }
@@ -449,93 +562,174 @@
         }
 
         #leads-leadForm .buttons .submit-btn {
-            background-color: #4a00e0;
+            background-color: #28a745;
             color: white;
             transition: background-color 0.2s ease;
         }
 
         #leads-leadForm .buttons .submit-btn:hover {
-            background-color: #3a00b8;
+            background-color: #218838;
         }
 
         /* Call History Styles */
-        .call-history h1, .call-history h2 {
-            color: #333;
+        .call-history-main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            height: 100%;
+        }
+
+        .call-history-metrics {
+            display: flex;
+            gap: 15px;
+        }
+
+        .call-history-metric-card {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            flex: 1;
+            text-align: left;
+        }
+
+        .call-history-metric-card h3 {
+            font-size: 24px;
             font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .call-history-metric-card p {
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .call-history-table-section {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: calc(100% - 100px);
+        }
+
+        .call-history-table-section::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .call-history-table-section::-webkit-scrollbar-track {
+            background: #f0f2f5;
+            border-radius: 4px;
+        }
+
+        .call-history-table-section::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        .call-history-table-section::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+
+        .call-history-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            background-color: #fff;
+        }
+
+        .call-history-table-header .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #f0f2f5;
+            padding: 8px 15px;
+            border-radius: 20px;
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .call-history-table-header .search-bar input {
+            border: none;
+            background: none;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+        }
+
+        .call-history-table-header .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .call-history-table-header .actions button {
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 20px;
+            border: none;
+            background-color: #28a745;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .call-history-table-header .actions button:hover {
+            background-color: #218838;
+        }
+
+        .call-history-table {
+            width: 100%;
+            min-width: 1000px;
+            border-collapse: collapse;
             font-size: 14px;
         }
 
-        .call-history #call-history-filters {
-            background-color: #fff;
-            padding: 10px 15px;
-            margin-top: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        .call-history-table th, .call-history-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .call-history-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        .call-history-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .call-history-table-header .filters {
             display: flex;
-            flex-wrap: wrap;
             gap: 10px;
             align-items: center;
         }
 
-        .call-history #call-history-filters label {
+        .call-history-table-header .filters label {
             display: flex;
             flex-direction: column;
             font-weight: 500;
-            color: #444;
+            color: #666;
             font-size: 12px;
+            text-transform: uppercase;
         }
 
-        .call-history #call-history-filters select {
+        .call-history-table-header .filters select {
             padding: 5px 8px;
             border-radius: 8px;
             border: 1px solid #ccc;
             font-size: 12px;
             margin-top: 5px;
             min-width: 100px;
-        }
-
-        .call-history button#call-history-applyFilters {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            font-size: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            margin-top: 10px;
-            height: fit-content;
-        }
-
-        .call-history button#call-history-applyFilters:hover {
-            background-color: #2980b9;
-        }
-
-        .call-history table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            background-color: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            font-size: 12px;
-        }
-
-        .call-history th, .call-history td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #eee;
-            text-align: left;
-        }
-
-        .call-history th {
-            background-color: #f0f2f5;
-            font-weight: 600;
-            color: #444;
-        }
-
-        .call-history tr:last-child td {
-            border-bottom: none;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -591,6 +785,23 @@
                     <h2>TOTAL INTERACTION</h2>
                     <canvas id="dashboard-callChart"></canvas>
                 </section>
+
+                <section class="dashboard-latest-call-section">
+                    <h2>LATEST CALLS</h2>
+                    <div class="dashboard-latest-call-table-section">
+                        <table id="dashboard-latest-call-table" class="dashboard-latest-call-table">
+                            <thead>
+                                <tr>
+                                    <th>Lead ID</th>
+                                    <th>Welcome Call</th>
+                                    <th>Target Parent</th>
+                                    <th>Product Interest</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
             </main>
         </div>
 
@@ -603,26 +814,25 @@
                         <p>Leads</p>
                     </div>
                 </div>
-
-                <div class="leads-table-section">
-                    <div class="leads-table-header">
-                        <div class="search-bar">
-                            <input type="text" placeholder="Search leads">
-                        </div>
-                        <div class="actions">
-                            <button id="leads-addLeadBtn">Create leads</button>
-                        </div>
+                <div class="leads-table-header">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search leads">
                     </div>
+                    <div class="actions">
+                        <button id="leads-addLeadBtn">Create leads</button>
+                    </div>
+                </div>
+                <div class="leads-table-section">
                     <table id="leads-leadsTable" class="leads-table">
                         <thead>
                             <tr>
-                                <th>Client Name</th>
-                                <th>Email</th>
+                                <th>Lead Name</th>
+                                <th>Lead Contact</th>
+                                <th>Created At</th>
                                 <th>Address</th>
-                                <th>Contact Number</th>
                                 <th>Called</th>
                                 <th>To Call</th>
-                                <th>Created At</th>
+                                <th>Lead Owner</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -682,60 +892,76 @@
         </div>
 
         <!-- Call History View -->
-        <div id="call-history-view" class="view-container call-history">
-            <h1>Call Records</h1>
-            <div id="call-history-filters">
-                <label>
-                    Welcome Call:
-                    <select id="call-history-filterWelcomeCall">
-                        <option value="">All</option>
-                        <option value="Success">Success</option>
-                        <option value="Failure">Failure</option>
-                    </select>
-                </label>
-                <label>
-                    Target Parent:
-                    <select id="call-history-filterTargetParent">
-                        <option value="">All</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
-                </label>
-                <label>
-                    Interest:
-                    <select id="call-history-filterProductInterest">
-                        <option value="">All</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
-                </label>
-                <button id="call-history-applyFilters">Apply Filters</button>
+        <div id="call-history-view" class="view-container">
+            <div class="call-history-main-content">
+                <div class="call-history-metrics">
+                    <div class="call-history-metric-card">
+                        <h3 id="call-history-callCount">0</h3>
+                        <p>Call Records</p>
+                    </div>
+                </div>
+                <div class="call-history-table-header">
+                    <div class="search-bar">
+                        <input type="text" id="call-history-search" placeholder="Search calls">
+                    </div>
+                    <div class="filters">
+                        <label>
+                            Welcome Call:
+                            <select id="call-history-filterWelcomeCall">
+                                <option value="">All</option>
+                                <option value="success">Success</option>
+                                <option value="failure">Failure</option>
+                            </select>
+                        </label>
+                        <label>
+                            Target Parent:
+                            <select id="call-history-filterTargetParent">
+                                <option value="">All</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </label>
+                        <label>
+                            Interest:
+                            <select id="call-history-filterProductInterest">
+                                <option value="">All</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="actions">
+                        <button id="call-history-applyFilters">Apply Filters</button>
+                    </div>
+                </div>
+                <div class="call-history-table-section">
+                    <table id="call-history-callTable" class="call-history-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Created At</th>
+                                <th>Call Name</th>
+                                <th>Phone Number</th>
+                                <th>Call Type</th>
+                                <th>Interest</th>
+                                <th>Target Parent</th>
+                                <th>Welcome Call</th>
+                                <th>Biz Owner ID</th>
+                                <th>Leads List ID</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
-            <table id="call-history-callTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Created At</th>
-                        <th>Call Name</th>
-                        <th>Phone Number</th>
-                        <th>Call Type</th>
-                        <th>Interest</th>
-                        <th>Target Parent</th>
-                        <th>Welcome Call</th>
-                        <th>Biz Owner ID</th>
-                        <th>Leads List ID</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
         </div>
     </div>
 
     <script type="module">
-        // Import all JavaScript modules
-        import { initDashboard, fetchAndRenderReport, renderChart } from './js/dashboard.js';
-        import { fetchLeads, setupEventListeners as setupLeadsEventListeners } from './js/leads.js';
-        import { fetchCallHistory, setupFilters, renderTable } from './js/callHistory.js';
+        // Import all JavaScript modules with cache-busting query parameter
+        import { initDashboard, fetchAndRenderReport, renderChart } from './js/dashboard.js?v=20250416-errorfix';
+        import { fetchLeads, setupEventListeners as setupLeadsEventListeners } from './js/leads.js?v=20250416-errorfix';
+        import { fetchCallHistory, setupFilters, renderTable } from './js/callHistory.js?v=20250416-errorfix';
 
         // Navigation Logic via Dropdown
         const viewSelector = document.getElementById('view-selector');
@@ -766,6 +992,7 @@
         // Initialize Call History
         document.addEventListener('DOMContentLoaded', () => {
             fetchCallHistory();
+            setupFilters();
         });
     </script>
 </body>
