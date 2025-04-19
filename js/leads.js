@@ -40,7 +40,7 @@ async function fetchLeads() {
                         : '-';
 
                     row.innerHTML = `
-                        <td class="lead-name">
+                        <td>
                             <div class="avatar"></div>
                             <span>${lead.clientName || '-'}</span>
                         </td>

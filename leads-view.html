@@ -1,84 +1,84 @@
 <div id="leads-view" class="view-container">
-  <div class="leads-main-content">
-      <div class="leads-metrics">
-          <div class="leads-metric-card">
-              <h3 id="leads-leadsCount">0</h3>
-              <p>Leads</p>
-          </div>
-      </div>
-      <div class="leads-table-header">
-          <div class="search-bar">
-              <input type="text" placeholder="Search leads">
-          </div>
-          <div class="actions">
-              <button id="leads-addLeadBtn">Create leads</button>
-          </div>
-      </div>
-      <div class="leads-table-section">
-          <table id="leads-leadsTable" class="leads-table">
-              <thead>
-                  <tr>
-                      <th>Lead Name</th>
-                      <th>Lead Contact</th>
-                      <th>Created At</th>
-                      <th>Address</th>
-                      <th>Called</th>
-                      <th>To Call</th>
-                      <th>Lead Owner</th>
-                  </tr>
-              </thead>
-              <tbody></tbody>
-          </table>
-      </div>
-  </div>
+    <div class="leads-main-content">
+        <div class="leads-metrics">
+            <div class="leads-metric-card">
+                <h3 id="leads-leadsCount">0</h3>
+                <p>Leads</p>
+            </div>
+        </div>
+        <div class="leads-table-header">
+            <div class="search-bar">
+                <input type="text" placeholder="Search leads">
+            </div>
+            <div class="actions">
+                <button id="leads-addLeadBtn">Create leads</button>
+            </div>
+        </div>
+        <div class="leads-table-section">
+            <table id="leads-leadsTable" class="leads-table">
+                <thead>
+                    <tr>
+                        <th>Lead Name</th>
+                        <th>Lead Contact</th>
+                        <th>Created At</th>
+                        <th>Address</th>
+                        <th>Called</th>
+                        <th>To Call</th>
+                        <th>Lead Owner</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
 
-  <!-- Overlay and Popups -->
-  <div id="leads-overlay"></div>
+        <!-- Overlay and Popups -->
+        <div id="leads-overlay"></div>
 
-  <!-- leadOptions Popup -->
-  <div id="leads-leadOptions">
-      <div class="title">
-          <span class="icon">+</span>
-          <span>Import Leads</span>
-      </div>
-      <div class="subtitle">How would you like to add leads?</div>
-      <div class="options">
-          <div class="option" id="leads-singleLeadBtn">
-              <div class="icon">⊞</div>
-              <span>Add manually</span>
-          </div>
-          <div class="option" id="leads-bulkLeadBtn">
-              <div class="icon">↓</div>
-              <span>Import from file</span>
-          </div>
-      </div>
-      <input type="file" id="leads-bulkFileInput" accept=".csv" style="display: none;">
-      <button class="cancel-btn" id="leads-cancelLeadOptionBtn">Cancel</button>
-  </div>
+        <!-- leadOptions Popup -->
+        <div id="leads-leadOptions">
+            <div class="title">
+                <span class="icon">+</span>
+                <span>Import Leads</span>
+            </div>
+            <div class="subtitle">How would you like to add leads?</div>
+            <div class="options">
+                <div class="option" id="leads-singleLeadBtn">
+                    <div class="icon">⊞</div>
+                    <span>Add manually</span>
+                </div>
+                <div class="option" id="leads-bulkLeadBtn">
+                    <div class="icon">↓</div>
+                    <span>Import from file</span>
+                </div>
+            </div>
+            <input type="file" id="leads-bulkFileInput" accept=".csv" style="display: none;">
+            <button class="cancel-btn" id="leads-cancelLeadOptionBtn">Cancel</button>
+        </div>
 
-  <!-- popupForm (Single Lead Form) -->
-  <div id="leads-popupForm">
-      <div class="title">
-          <span class="icon">+</span>
-          <span>Add Lead</span>
-      </div>
-      <form id="leads-leadForm">
-          <label>Name
-              <input type="text" name="clientName" required>
-          </label>
-          <label>Email
-              <input type="email" name="email" required>
-          </label>
-          <label>Phone
-              <input type="text" name="contactNumber" required>
-          </label>
-          <label>Address
-              <input type="text" name="address" required>
-          </label>
-          <div class="buttons">
-              <button type="button" class="cancel-btn" id="leads-cancelBtn">Cancel</button>
-              <button type="submit" class="submit-btn">Add</button>
-          </div>
-      </form>
-  </div>
+        <!-- popupForm (Single Lead Form) -->
+        <div id="leads-popupForm">
+            <div class="title">
+                <span class="icon">+</span>
+                <span>Add Lead</span>
+            </div>
+            <form id="leads-leadForm">
+                <label>Name
+                    <input type="text" name="clientName" required>
+                </label>
+                <label>Email
+                    <input type="email" name="email" required>
+                </label>
+                <label>Phone
+                    <input type="text" name="contactNumber" required>
+                </label>
+                <label>Address
+                    <input type="text" name="address" required>
+                </label>
+                <div class="buttons">
+                    <button type="button" class="cancel-btn" id="leads-cancelBtn">Cancel</button>
+                    <button type="submit" class="submit-btn">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>

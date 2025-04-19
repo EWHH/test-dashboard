@@ -37,10 +37,17 @@
                 setAuthState(true, token);
                 console.log('Token validated, loading dashboard');
             } catch (err) {
-                console.error('Token validation failed:', err);
-                setAuthState(false);
-                window.location.href = 'login.html';
-                return;
+                if (document.cookie !== '') {
+                    console.error('Token exists but API request failed:', err);
+                    //console.error('Token validation failed:', err);
+                    //setAuthState(false);
+                    //window.location.href = 'login.html';
+                    return;
+                } else {
+                    console.error('Token validation failed:', err);
+                    setAuthState(false);
+                    window.location.href = 'login.html';
+                }
             }
 
             fetch('dashboard.html')

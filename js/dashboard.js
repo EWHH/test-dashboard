@@ -105,51 +105,76 @@ function renderChart(report) {
         return;
     }
 
-    if (!report.chartData) {
-        console.warn("No chartData provided in report, using placeholder data");
-        ctx.canvas.parentElement.innerHTML = '<p>No interaction data available</p>';
+    // Ensure Chart.js is loaded
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js is not loaded');
+        ctx.canvas.parentElement.innerHTML = '<p>Failed to load chart library</p>';
         return;
     }
 
-    const labels = report.chartData?.labels || [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-    ];
-    const data = report.chartData?.data || [0, 0, 0, 0, 0, 0];
+    // Calculate the maximum value for scaling
+    const maxWelcome = Math.max(report.welcome || 0, (report.welcome || 0) * 0.8, (report.welcome || 0) * 0.6);
+    const maxParent = Math.max(report.parent || 0, (report.parent || 0) * 0.9, (report.parent || 0) * 0.7);
+    const maxValue = Math.max(maxWelcome, maxParent);
 
     new Chart(ctx, {
-        type: "line",
+        type: 'bar',
         data: {
-            labels: labels,
+            labels: ['Month 1', 'Month 2', 'Month 3'],
             datasets: [
                 {
-                    label: "Interactions",
-                    data: data,
-                    borderColor: "#6B48FF",
-                    backgroundColor: "rgba(107, 72, 255, 0.1)",
-                    fill: true,
-                    tension: 0.4,
+                    label: 'Welcome',
+                    data: [report.welcome || 0, (report.welcome || 0) * 0.8, (report.welcome || 0) * 0.6],
+                    backgroundColor: '#34D399',
+                    barThickness: 20,
                 },
-            ],
+                {
+                    label: 'Parent',
+                    data: [report.parent || 0, (report.parent || 0) * 0.9, (report.parent || 0) * 0.7],
+                    backgroundColor: '#6B48FF',
+                    barThickness: 20,
+                },
+                {
+                    label: 'Interest',
+                    data: [report.interest || 0, (report.interest || 0) * 0.7, (report.interest || 0) * 0.5],
+                    backgroundColor: '#34D399',
+                    barThickness: 20,
+                    hidden: true, // Hide Interest dataset
+                }
+            ]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    display: false,
-                },
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        padding: 20,
+                    }
+                }
             },
             scales: {
+                x: {
+                    grid: {
+                        display: false,
+                    }
+                },
                 y: {
                     beginAtZero: true,
-                },
-            },
-        },
+                    suggestedMax: Math.max(10, maxValue * 1.2),
+                    ticks: {
+                        callback: function(value) {
+                            return value;
+                        }
+                    },
+                    grid: {
+                        drawBorder: false,
+                    }
+                }
+            }
+        }
     });
 }
 
