@@ -42,7 +42,7 @@ export async function loginAndStoreToken(email, password) {
         const data = await res.json();
 
         if (res.ok && data.authToken) {
-            document.cookie = `authToken=${data.authToken}; path=/; samesite=lax; max-age=30`;
+            document.cookie = `authToken=${data.authToken}; path=/; samesite=lax; max-age=3600`;
             setAuthState(true, data.authToken);
             console.log('Token received and stored as cookie');
             return data.authToken;

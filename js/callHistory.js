@@ -84,6 +84,48 @@ function updateCallCount(count) {
     });
 }
 
+function applyFilters(searchTerm, welcomeCall, targetParent, interest) {
+    try {
+        console.log('Applying filters with:', { searchTerm, welcomeCall, targetParent, interest });
+        let filteredCalls = [...allCalls];
+
+        if (searchTerm) {
+            filteredCalls = filteredCalls.filter(call =>
+                (call.callName || '').toLowerCase().startsWith(searchTerm.toLowerCase())
+            );
+            console.log('After search filter:', filteredCalls);
+        }
+
+        if (welcomeCall) {
+            filteredCalls = filteredCalls.filter(call =>
+                call.welcomeCall === welcomeCall
+            );
+            console.log('After welcomeCall filter:', filteredCalls);
+        }
+
+        if (targetParent) {
+            filteredCalls = filteredCalls.filter(call =>
+                call.targetParent === targetParent
+            );
+            console.log('After targetParent filter:', filteredCalls);
+        }
+
+        if (interest) {
+            filteredCalls = filteredCalls.filter(call =>
+                call.interest === interest
+            );
+            console.log('After interest filter:', filteredCalls);
+        }
+
+        console.log('Final filtered calls:', filteredCalls);
+        renderTable(filteredCalls);
+    } catch (error) {
+        console.error('Error applying filters:', error.message);
+        renderTable([]);
+        updateCallCount(0);
+    }
+}
+
 export function setupFilters() {
     requestAnimationFrame(() => {
         const searchInput = document.querySelector('#call-history-search');
@@ -105,57 +147,41 @@ export function setupFilters() {
             return;
         }
 
+        // Cache current filter values
+        let currentFilters = {
+            welcomeCall: welcomeCallFilter.value,
+            targetParent: targetParentFilter.value,
+            interest: productInterestFilter.value
+        };
+
+        // Update filter cache when dropdowns change
+        welcomeCallFilter.addEventListener('change', () => {
+            currentFilters.welcomeCall = welcomeCallFilter.value;
+            console.log('Updated welcomeCall filter:', currentFilters.welcomeCall);
+        });
+
+        targetParentFilter.addEventListener('change', () => {
+            currentFilters.targetParent = targetParentFilter.value;
+            console.log('Updated targetParent filter:', currentFilters.targetParent);
+        });
+
+        productInterestFilter.addEventListener('change', () => {
+            currentFilters.interest = productInterestFilter.value;
+            console.log('Updated interest filter:', currentFilters.interest);
+        });
+
+        // Search as user types
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.trim();
+            console.log('Search input changed:', searchTerm);
+            applyFilters(searchTerm, currentFilters.welcomeCall, currentFilters.targetParent, currentFilters.interest);
+        });
+
+        // Apply dropdown filters on button click
         applyFiltersButton.addEventListener('click', () => {
             console.log('Apply Filters button clicked');
-            try {
-                console.log('All calls:', allCalls);
-                let filteredCalls = [...allCalls];
-
-                console.log('Filter selections:', {
-                    search: searchInput.value,
-                    welcomeCall: welcomeCallFilter.value,
-                    targetParent: targetParentFilter.value,
-                    interest: productInterestFilter.value
-                });
-
-                if (searchInput.value.trim()) {
-                    const searchTerm = searchInput.value.trim().toLowerCase();
-                    filteredCalls = filteredCalls.filter(call =>
-                        (call.callName || '').toLowerCase().includes(searchTerm) ||
-                        (call.phoneNumber || '').toLowerCase().includes(searchTerm) ||
-                        (call.callType || '').toLowerCase().includes(searchTerm)
-                    );
-                    console.log('After search filter:', filteredCalls);
-                }
-
-                if (welcomeCallFilter.value) {
-                    filteredCalls = filteredCalls.filter(call =>
-                        call.welcomeCall === welcomeCallFilter.value
-                    );
-                    console.log('After welcomeCall filter:', filteredCalls);
-                }
-
-                if (targetParentFilter.value) {
-                    filteredCalls = filteredCalls.filter(call =>
-                        call.targetParent === targetParentFilter.value
-                    );
-                    console.log('After targetParent filter:', filteredCalls);
-                }
-
-                if (productInterestFilter.value) {
-                    filteredCalls = filteredCalls.filter(call =>
-                        call.interest === productInterestFilter.value
-                    );
-                    console.log('After interest filter:', filteredCalls);
-                }
-
-                console.log('Final filtered calls:', filteredCalls);
-                renderTable(filteredCalls);
-            } catch (error) {
-                console.error('Error applying filters:', error.message);
-                renderTable([]);
-                updateCallCount(0);
-            }
+            const searchTerm = searchInput.value.trim();
+            applyFilters(searchTerm, currentFilters.welcomeCall, currentFilters.targetParent, currentFilters.interest);
         });
     });
 }

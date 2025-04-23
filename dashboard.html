@@ -71,6 +71,95 @@
                 </div>
             </main>
         </div>
+
+        <!-- Leads List View -->
+        <div id="leads-view" class="view-container">
+            <div class="leads-main-content">
+                <div class="leads-metrics">
+                    <div class="leads-metric-card">
+                        <h3 id="leads-leadsCount">0</h3>
+                        <p>Leads</p>
+                    </div>
+                </div>
+                <div class="leads-table-header">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search leads">
+                    </div>
+                    <div class="actions">
+                        <button id="leads-toggleToCallBtn">Toggle To Call</button>
+                        <button id="leads-addLeadBtn">Create leads</button>
+                    </div>
+                </div>
+                <div class="leads-table-section">
+                    <table id="leads-leadsTable" class="leads-table">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-column"><input type="checkbox" id="leads-selectAll"></th>
+                                <th>Lead Name</th>
+                                <th>Lead Contact</th>
+                                <th>Created At</th>
+                                <th>Address</th>
+                                <th>Called</th>
+                                <th>To Call</th>
+                                <th>Lead Owner</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <!-- Overlay and Popups -->
+                <div id="leads-overlay"></div>
+
+                <!-- leadOptions Popup -->
+                <div id="leads-leadOptions">
+                    <div class="title">
+                        <span class="icon">+</span>
+                        <span>Import Leads</span>
+                    </div>
+                    <div class="subtitle">How would you like to add leads?</div>
+                    <div class="options">
+                        <div class="option" id="leads-singleLeadBtn">
+                            <div class="icon">⊞</div>
+                            <span>Add manually</span>
+                        </div>
+                        <div class="option" id="leads-bulkLeadBtn">
+                            <div class="icon">↓</div>
+                            <span>Import from file</span>
+                        </div>
+                    </div>
+                    <input type="file" id="leads-bulkFileInput" accept=".csv" style="display: none;">
+                    <button class="cancel-btn" id="leads-cancelLeadOptionBtn">Cancel</button>
+                </div>
+
+                <!-- popupForm (Single Lead Form) -->
+                <div id="leads-popupForm">
+                    <div class="title">
+                        <span class="icon">+</span>
+                        <span>Add Lead</span>
+                    </div>
+                    <form id="leads-leadForm">
+                        <label>Name
+                            <input type="text" name="clientName" required>
+                        </label>
+                        <label>Email
+                            <input type="email" name="email" required>
+                        </label>
+                        <label>Phone
+                            <input type="text" name="contactNumber" required>
+                        </label>
+                        <label>Address
+                            <input type="text" name="address" required>
+                        </label>
+                        <div class="buttons">
+                            <button type="button" class="cancel-btn" id="leads-cancelBtn">Cancel</button>
+                            <button type="submit" class="submit-btn">Add</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <style>
@@ -137,7 +226,7 @@
             display: none;
             flex: 1;
             padding: 20px;
-            overflow: auto;
+            overflow: hidden; /* Changed to hidden to prevent view-container scrolling */
         }
 
         .view-container.active {
@@ -294,12 +383,13 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            height: 100%;
+            flex: 1; /* Ensure it takes remaining space */
         }
 
         .leads-metrics {
             display: flex;
             gap: 20px;
+            flex-shrink: 0; /* Prevent metrics from shrinking */
         }
 
         .leads-metric-card {
@@ -331,13 +421,13 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
             overflow: auto; /* Unified overflow for both directions */
             flex: 1;
-            max-height: calc(100vh - 250px); /* Account for header, metrics, table header */
+            max-height: calc(100vh - 300px); /* Account for header, metrics, table header */
             width: 100%;
         }
 
         .leads-table-section::-webkit-scrollbar {
-            width: 8px; /* Vertical scrollbar */
-            height: 8px; /* Horizontal scrollbar */
+            width: 8px;
+            height: 8px;
         }
 
         .leads-table-section::-webkit-scrollbar-track {
@@ -354,7 +444,6 @@
             background: #aaa;
         }
 
-        /* Fallback for non-WebKit browsers */
         .leads-table-section {
             scrollbar-width: thin;
             scrollbar-color: #ccc #f0f2f5;
@@ -367,6 +456,7 @@
             padding: 15px 20px;
             border-bottom: 1px solid #eee;
             background-color: #fff;
+            flex-shrink: 0; /* Prevent table header from shrinking */
         }
 
         .leads-table-header .search-bar {
@@ -410,9 +500,13 @@
 
         .leads-table {
             width: 100%;
-            min-width: 800px;
+            min-width: 1000px; /* Ensures all columns, including Actions, have enough space */
             border-collapse: collapse;
             font-size: 14px;
+        }
+
+        .leads-table tr {
+            min-height: 48px; /* Set a minimum height for rows to ensure consistency */
         }
 
         .leads-table th, .leads-table td {
@@ -420,6 +514,9 @@
             border-bottom: 1px solid #eee;
             text-align: left;
             white-space: nowrap;
+            vertical-align: middle; /* Ensure all cells are vertically centered */
+            min-height: 64px;
+            max-height: 64px;
         }
 
         .leads-table th {
@@ -428,23 +525,83 @@
             color: #666;
             text-transform: uppercase;
             font-size: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); /* Subtle shadow when scrolling */
+        }
+
+        .leads-table th.checkbox-column {
+            width: 40px; /* Narrow width for checkbox column */
+            padding: 15px 10px;
+        }
+
+        .leads-table th.checkbox-column input[type="checkbox"] {
+            display: none; /* Hide the header checkbox as per user's fix */
+        }
+
+        .leads-table td:first-child {
+            width: 40px; /* Match the header width */
+            padding: 15px 10px;
+            text-align: center; /* Center the checkbox horizontally */
+            line-height: 14px; /* Match the font-size line height of text in other columns */
+        }
+
+        .leads-table td:first-child input[type="checkbox"] {
+            vertical-align: middle; /* Ensure checkbox is vertically centered */
+            margin: 0; /* Remove any default margins on the checkbox */
+            position: relative;
+            top: -1px; /* Fine-tune vertical position if needed */
+        }
+
+        .leads-table th:nth-child(2) { /* Lead Name */
+            width: 150px;
+        }
+
+        .leads-table th:nth-child(3) { /* Lead Contact */
+            width: 200px;
+        }
+
+        .leads-table th:nth-child(4) { /* Created At */
+            width: 100px;
+        }
+
+        .leads-table th:nth-child(5) { /* Address */
+            width: 300px;
+        }
+
+        .leads-table th:nth-child(6) { /* Called */
+            width: 80px;
+        }
+
+        .leads-table th:nth-child(7) { /* To Call */
+            width: 80px;
+        }
+
+        .leads-table th:nth-child(8) { /* Lead Owner */
+            width: 100px;
+        }
+
+        .leads-table th:nth-child(9) { /* Actions */
+            width: 100px; /* Adjusted to accommodate both edit and delete buttons */
         }
 
         .leads-table tr:last-child td {
             border-bottom: none;
         }
 
-        .leads-table .lead-name {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .leads-table .lead-name .avatar {
+        .leads-table .avatar {
             width: 36px;
             height: 36px;
             border-radius: 50%;
             background-color: #e9ecef;
+        }
+
+        .leads-table .lead-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 64px;
         }
 
         .leads-table .lead-contact {
@@ -454,11 +611,11 @@
             align-items: flex-start;
         }
 
-        .leads-table .lead-contact .email {
+        .leads-table .email {
             color: #333;
         }
 
-        .leads-table .lead-contact .phone {
+        .leads-table .phone {
             color: #666;
             font-size: 14px;
         }
@@ -467,19 +624,72 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            min-height: 64px;
         }
 
         .leads-table .lead-owner .avatar {
             width: 28px;
             height: 28px;
-            border-radius: 50%;
-            background-color: #e9ecef;
         }
 
         .leads-table .address {
             max-width: 250px;
             white-space: normal;
             word-wrap: break-word;
+        }
+
+        /*.leads-table td {
+            min-height: 64px;
+            max-height: 64px;
+        }*/
+
+        /* Edit Input Styles (not applied to <td>) */
+        .leads-table input[data-field], .leads-table select[data-field] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .leads-table input[data-field]:focus, .leads-table select[data-field]:focus {
+            border-color: #28a745;
+            outline: none;
+        }
+
+        .leads-table input[data-field="email"], .leads-table input[data-field="contactNumber"] {
+            margin-bottom: 6px;
+        }
+
+        .leads-table select[data-field] {
+            padding: 8px;
+        }
+
+        /* Edit Controls Styles (not applied to <td>) */
+        .edit-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .edit-controls .save-btn {
+            color: #28a745;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .edit-controls .cancel-btn {
+            color: #dc3545;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Delete Button Styles */
+        .delete-btn {
+            color: #dc3545; /* Red color for the garbage can icon */
+            font-size: 16px;
         }
 
         /* Leads Popup Styles */
@@ -679,7 +889,7 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            height: 100%;
+            flex: 1;
         }
 
         .call-history-metrics {
