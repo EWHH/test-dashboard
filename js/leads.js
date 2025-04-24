@@ -1,6 +1,6 @@
 import { authState, checkResponse } from "./authentication.js";
 
-console.log("leads.js loaded - Version with edit, delete, stable ordering, and bulk toCall toggle with narrow checkbox column (2025-04-22)");
+console.log("leads.js loaded - Version with edit, delete, stable ordering, bulk toCall toggle, bulk delete, narrow checkbox column, and header detection (2025-04-24)");
 
 let allLeads = []; // Store all leads for filtering
 let displayedLeads = []; // Track the currently displayed leads
@@ -127,8 +127,9 @@ function setupEventListeners() {
         const searchInput = document.querySelector('.leads-table-header .search-bar input');
         const tbody = document.querySelector('#leads-leadsTable tbody');
         const toggleToCallBtn = document.getElementById('leads-toggleToCallBtn');
+        const deleteSelectedBtn = document.getElementById('leads-deleteSelectedBtn');
 
-        if (!overlay || !popup || !leadOptions || !fileInput || !searchInput || !tbody || !toggleToCallBtn) {
+        if (!overlay || !popup || !leadOptions || !fileInput || !searchInput || !tbody || !toggleToCallBtn || !deleteSelectedBtn) {
             console.error('One or more required DOM elements are missing in Leads view.');
             return;
         }
@@ -206,15 +207,34 @@ function setupEventListeners() {
                     const lines = e.target.result.split('\n').filter(line => line.trim() !== '');
                     const leads = [];
 
-                    for (let i = 0; i < lines.length; i++) {
+                    // Determine if the first row is a header by checking if the second column (email) contains an '@' symbol
+                    let startIndex = 0;
+                    if (lines.length > 0) {
+                        const firstRow = lines[0].split(',').map(s => s.trim());
+                        const emailField = firstRow[1] || ''; // Second column should be the email
+                        // If the email field does not contain '@', assume the first row is a header
+                        if (!emailField.includes('@')) {
+                            console.log('Detected header row:', firstRow);
+                            startIndex = 1; // Skip the header row
+                        } else {
+                            console.log('No header row detected, treating first row as data:', firstRow);
+                            startIndex = 0; // Include the first row as data
+                        }
+                    }
+
+                    // Process the rows starting from the determined index
+                    for (let i = startIndex; i < lines.length; i++) {
                         const [clientName, email, address, contactNumber] = lines[i].split(',').map(s => s.trim());
                         if (clientName && email && address && contactNumber) {
                             leads.push({ clientName, email, address, contactNumber });
+                        } else {
+                            console.warn(`Skipping invalid row ${i + 1}:`, lines[i]);
                         }
                     }
 
                     if (leads.length === 0) {
                         console.log("No valid leads found in file.");
+                        alert("No valid leads found in the file. Ensure the CSV file contains valid data in the format: clientName,email,address,contactNumber");
                         return;
                     }
 
@@ -249,6 +269,7 @@ function setupEventListeners() {
                         fetchLeads();
                     } catch (err) {
                         console.error('Bulk upload failed:', err);
+                        alert('Failed to upload leads. Please try again.');
                     } finally {
                         hideLeadOptions();
                         fileInput.value = '';
@@ -404,6 +425,75 @@ function setupEventListeners() {
                 } catch (err) {
                     console.error('Error toggling toCall values:', err);
                     alert('Failed to toggle toCall values for some leads.');
+                }
+            });
+        }
+
+        if (deleteSelectedBtn) {
+            deleteSelectedBtn.addEventListener('click', async () => {
+                const selectedCheckboxes = tbody.querySelectorAll('.lead-select-checkbox:checked');
+                if (selectedCheckboxes.length === 0) {
+                    alert('Please select at least one lead to delete.');
+                    return;
+                }
+
+                // Collect names of selected leads for confirmation
+                const selectedLeadIds = Array.from(selectedCheckboxes).map(checkbox => {
+                    const row = checkbox.closest('tr');
+                    return parseInt(row.getAttribute('data-id'));
+                });
+                const selectedLeadNames = selectedLeadIds.map(id => {
+                    const lead = allLeads.find(l => l.id === id);
+                    return lead ? lead.clientName : 'Unknown';
+                }).filter(name => name !== 'Unknown');
+
+                // Confirm deletion
+                const confirmDelete = confirm(
+                    `Are you sure you want to delete ${selectedLeadIds.length} selected lead(s)?\n\n` +
+                    (selectedLeadNames.length > 0 ? `Leads: ${selectedLeadNames.join(', ')}` : '')
+                );
+                if (!confirmDelete) return;
+
+                try {
+                    if (!authState.isAuthenticated || !authState.token) {
+                        console.log("Not authenticated, redirecting to login");
+                        window.location.href = "login.html";
+                        return;
+                    }
+
+                    for (const leadId of selectedLeadIds) {
+                        const response = await fetch(
+                            'https://x8ki-letl-twmt.n7.xano.io/api:ulG9WHn0/delete_lead',
+                            {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${authState.token}`
+                                },
+                                body: JSON.stringify({ oca_leadslist_id: leadId })
+                            }
+                        );
+
+                        checkResponse(response);
+
+                        if (!response.ok) {
+                            const errData = await response.json();
+                            throw new Error(errData.message || `Failed to delete lead ${leadId}`);
+                        }
+
+                        console.log(`Lead ${leadId} deleted successfully!`);
+                    }
+
+                    // Remove the deleted leads from allLeads and displayedLeads
+                    allLeads = allLeads.filter(lead => !selectedLeadIds.includes(lead.id));
+                    displayedLeads = displayedLeads.filter(lead => !selectedLeadIds.includes(lead.id));
+
+                    // Re-render the table
+                    renderLeads(displayedLeads);
+                    console.log('Selected leads deleted successfully!');
+                } catch (err) {
+                    console.error('Error deleting selected leads:', err);
+                    alert('Failed to delete some leads. Please try again.');
                 }
             });
         }

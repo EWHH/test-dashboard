@@ -12,6 +12,9 @@
 
     <!-- Container for Views -->
     <div id="view-content">
+        <!-- Global Overlay for Popups -->
+        <div id="leads-overlay"></div>
+
         <!-- Dashboard View -->
         <div id="dashboard-view" class="view-container active">
             <main class="dashboard-main">
@@ -87,6 +90,7 @@
                     </div>
                     <div class="actions">
                         <button id="leads-toggleToCallBtn">Toggle To Call</button>
+                        <button id="leads-deleteSelectedBtn">Delete Selected</button>
                         <button id="leads-addLeadBtn">Create leads</button>
                     </div>
                 </div>
@@ -108,9 +112,6 @@
                         <tbody></tbody>
                     </table>
                 </div>
-
-                <!-- Overlay and Popups -->
-                <div id="leads-overlay"></div>
 
                 <!-- leadOptions Popup -->
                 <div id="leads-leadOptions">
@@ -488,14 +489,31 @@
             font-size: 16px;
             border-radius: 20px;
             border: none;
-            background-color: #28a745;
             color: #fff;
             cursor: pointer;
             font-weight: 500;
         }
 
         .leads-table-header .actions button:hover {
+            opacity: 0.9;
+        }
+
+        .leads-table-header .actions #leads-toggleToCallBtn,
+        .leads-table-header .actions #leads-addLeadBtn {
+            background-color: #28a745;
+        }
+
+        .leads-table-header .actions #leads-toggleToCallBtn:hover,
+        .leads-table-header .actions #leads-addLeadBtn:hover {
             background-color: #218838;
+        }
+
+        .leads-table-header .actions #leads-deleteSelectedBtn {
+            background-color: #dc3545;
+        }
+
+        .leads-table-header .actions #leads-deleteSelectedBtn:hover {
+            background-color: #c82333;
         }
 
         .leads-table {
@@ -515,8 +533,6 @@
             text-align: left;
             white-space: nowrap;
             vertical-align: middle; /* Ensure all cells are vertically centered */
-            min-height: 64px;
-            max-height: 64px;
         }
 
         .leads-table th {
@@ -637,11 +653,6 @@
             white-space: normal;
             word-wrap: break-word;
         }
-
-        /*.leads-table td {
-            min-height: 64px;
-            max-height: 64px;
-        }*/
 
         /* Edit Input Styles (not applied to <td>) */
         .leads-table input[data-field], .leads-table select[data-field] {
@@ -953,10 +964,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 10px 15px; /* Reduced padding to save space */
             border-bottom: 1px solid #eee;
             background-color: #fff;
             flex-shrink: 0;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 10px; /* Add gap for wrapped elements */
         }
 
         .call-history-table-header .search-bar {
@@ -964,34 +977,83 @@
             align-items: center;
             gap: 10px;
             background-color: #f0f2f5;
-            padding: 10px 15px;
+            padding: 8px 12px; /* Reduced padding */
             border-radius: 20px;
             flex: 1;
-            max-width: 400px;
+            max-width: 300px; /* Reduced max-width to give more space */
+            min-width: 200px; /* Ensure it doesn't shrink too much */
         }
 
         .call-history-table-header .search-bar input {
             border: none;
             background: none;
-            font-size: 16px;
+            font-size: 14px; /* Reduced font size */
             outline: none;
             width: 100%;
         }
 
+        .call-history-table-header .filters {
+            display: flex;
+            gap: 10px; /* Reduced gap between filter elements */
+            align-items: center;
+            flex: 2; /* Give filters more space */
+            flex-wrap: wrap; /* Allow filters to wrap if needed */
+        }
+
+        .call-history-table-header .filters label {
+            display: flex;
+            flex-direction: column;
+            font-weight: 500;
+            color: #666;
+            font-size: 12px; /* Reduced font size */
+            text-transform: uppercase;
+        }
+
+        .call-history-table-header .filters select,
+        .call-history-table-header .filters input[type="date"] {
+            padding: 6px 10px; /* Reduced padding */
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 12px; /* Reduced font size */
+            margin-top: 4px; /* Reduced margin */
+            min-width: 100px; /* Reduced min-width */
+            font-family: 'Inter', sans-serif;
+            background-color: #fff;
+            color: #333;
+        }
+
+        .call-history-table-header .filters input[type="date"]:focus,
+        .call-history-table-header .filters select:focus {
+            border-color: #28a745;
+            outline: none;
+        }
+
+        /* Ensure date inputs have consistent appearance across browsers */
+        .call-history-table-header .filters input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .call-history-table-header .filters input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
         .call-history-table-header .actions {
             display: flex;
-            gap: 15px;
+            gap: 8px; /* Reduced gap between buttons */
+            flex-shrink: 0;
         }
 
         .call-history-table-header .actions button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 20px;
+            padding: 6px 12px; /* Reduced padding to make buttons smaller */
+            font-size: 12px; /* Reduced font size */
+            border-radius: 15px; /* Slightly smaller border-radius */
             border: none;
             background-color: #28a745;
             color: #fff;
             cursor: pointer;
             font-weight: 500;
+            white-space: nowrap; /* Prevent text wrapping */
         }
 
         .call-history-table-header .actions button:hover {
@@ -1025,30 +1087,6 @@
 
         .call-history-table tr:last-child td {
             border-bottom: none;
-        }
-
-        .call-history-table-header .filters {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .call-history-table-header .filters label {
-            display: flex;
-            flex-direction: column;
-            font-weight: 500;
-            color: #666;
-            font-size: 14px;
-            text-transform: uppercase;
-        }
-
-        .call-history-table-header .filters select {
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-            margin-top: 6px;
-            min-width: 120px;
         }
     </style>
 </div>
