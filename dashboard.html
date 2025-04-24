@@ -357,7 +357,7 @@
 
         .dashboard-latest-call-table th {
             background-color: #f0f2f5;
-            font-weight: 600;
+            font: 600 14px 'Inter', sans-serif;
             color: #444;
         }
 
@@ -939,6 +939,8 @@
             overflow-x: auto;
             overflow-y: auto;
             flex: 1;
+            max-height: calc(100vh - 300px); /* Adjusted to match Leads view */
+            width: 100%;
         }
 
         .call-history-table-section::-webkit-scrollbar {
@@ -958,6 +960,11 @@
 
         .call-history-table-section::-webkit-scrollbar-thumb:hover {
             background: #aaa;
+        }
+
+        .call-history-table-section {
+            scrollbar-width: thin;
+            scrollbar-color: #ccc #f0f2f5;
         }
 
         .call-history-table-header {
@@ -1076,6 +1083,7 @@
             position: sticky;
             top: 0;
             z-index: 1;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); /* Subtle shadow when scrolling */
         }
 
         .call-history-table th, .call-history-table td {
