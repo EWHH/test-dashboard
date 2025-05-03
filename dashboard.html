@@ -22,28 +22,28 @@
                     <div class="dashboard-card purple">
                         <span class="icon">✨</span>
                         <div>
-                            <h3>Total Calls</h3>
+                            <h3 class="dashboard-card-label" data-metric="totalCall">Total Calls</h3>
                             <p id="dashboard-totalCall">-</p>
                         </div>
                     </div>
                     <div class="dashboard-card">
                         <span class="icon">🔍</span>
                         <div>
-                            <h3>Welcome</h3>
+                            <h3 class="dashboard-card-label" data-metric="metric1">Welcome</h3>
                             <p id="dashboard-welcome">-</p>
                         </div>
                     </div>
                     <div class="dashboard-card">
                         <span class="icon">📈</span>
                         <div>
-                            <h3>Parent</h3>
+                            <h3 class="dashboard-card-label" data-metric="metric2">Parent</h3>
                             <p id="dashboard-parent">-</p>
                         </div>
                     </div>
                     <div class="dashboard-card">
                         <span class="icon">📞</span>
                         <div>
-                            <h3>Interest</h3>
+                            <h3 class="dashboard-card-label" data-metric="metric3">Interest</h3>
                             <p id="dashboard-interest">-</p>
                         </div>
                     </div>
@@ -227,7 +227,7 @@
             display: none;
             flex: 1;
             padding: 20px;
-            overflow: hidden; /* Changed to hidden to prevent view-container scrolling */
+            overflow: hidden;
         }
 
         .view-container.active {
@@ -384,13 +384,13 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            flex: 1; /* Ensure it takes remaining space */
+            flex: 1;
         }
 
         .leads-metrics {
             display: flex;
             gap: 20px;
-            flex-shrink: 0; /* Prevent metrics from shrinking */
+            flex-shrink: 0;
         }
 
         .leads-metric-card {
@@ -420,9 +420,9 @@
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            overflow: auto; /* Unified overflow for both directions */
+            overflow: auto;
             flex: 1;
-            max-height: calc(100vh - 300px); /* Account for header, metrics, table header */
+            max-height: calc(100vh - 300px);
             width: 100%;
         }
 
@@ -457,7 +457,7 @@
             padding: 15px 20px;
             border-bottom: 1px solid #eee;
             background-color: #fff;
-            flex-shrink: 0; /* Prevent table header from shrinking */
+            flex-shrink: 0;
         }
 
         .leads-table-header .search-bar {
@@ -518,13 +518,13 @@
 
         .leads-table {
             width: 100%;
-            min-width: 1000px; /* Ensures all columns, including Actions, have enough space */
+            min-width: 1000px;
             border-collapse: collapse;
             font-size: 14px;
         }
 
         .leads-table tr {
-            min-height: 48px; /* Set a minimum height for rows to ensure consistency */
+            min-height: 48px;
         }
 
         .leads-table th, .leads-table td {
@@ -532,7 +532,7 @@
             border-bottom: 1px solid #eee;
             text-align: left;
             white-space: nowrap;
-            vertical-align: middle; /* Ensure all cells are vertically centered */
+            vertical-align: middle;
         }
 
         .leads-table th {
@@ -544,62 +544,62 @@
             position: sticky;
             top: 0;
             z-index: 1;
-            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); /* Subtle shadow when scrolling */
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
         }
 
         .leads-table th.checkbox-column {
-            width: 40px; /* Narrow width for checkbox column */
+            width: 40px;
             padding: 15px 10px;
         }
 
         .leads-table th.checkbox-column input[type="checkbox"] {
-            display: none; /* Hide the header checkbox as per user's fix */
+            display: none;
         }
 
         .leads-table td:first-child {
-            width: 40px; /* Match the header width */
+            width: 40px;
             padding: 15px 10px;
-            text-align: center; /* Center the checkbox horizontally */
-            line-height: 14px; /* Match the font-size line height of text in other columns */
+            text-align: center;
+            line-height: 14px;
         }
 
         .leads-table td:first-child input[type="checkbox"] {
-            vertical-align: middle; /* Ensure checkbox is vertically centered */
-            margin: 0; /* Remove any default margins on the checkbox */
+            vertical-align: middle;
+            margin: 0;
             position: relative;
-            top: -1px; /* Fine-tune vertical position if needed */
+            top: -1px;
         }
 
-        .leads-table th:nth-child(2) { /* Lead Name */
+        .leads-table th:nth-child(2) {
             width: 150px;
         }
 
-        .leads-table th:nth-child(3) { /* Lead Contact */
+        .leads-table th:nth-child(3) {
             width: 200px;
         }
 
-        .leads-table th:nth-child(4) { /* Created At */
+        .leads-table th:nth-child(4) {
             width: 100px;
         }
 
-        .leads-table th:nth-child(5) { /* Address */
+        .leads-table th:nth-child(5) {
             width: 300px;
         }
 
-        .leads-table th:nth-child(6) { /* Called */
+        .leads-table th:nth-child(6) {
             width: 80px;
         }
 
-        .leads-table th:nth-child(7) { /* To Call */
+        .leads-table th:nth-child(7) {
             width: 80px;
         }
 
-        .leads-table th:nth-child(8) { /* Lead Owner */
+        .leads-table th:nth-child(8) {
             width: 100px;
         }
 
-        .leads-table th:nth-child(9) { /* Actions */
-            width: 100px; /* Adjusted to accommodate both edit and delete buttons */
+        .leads-table th:nth-child(9) {
+            width: 100px;
         }
 
         .leads-table tr:last-child td {
@@ -654,7 +654,6 @@
             word-wrap: break-word;
         }
 
-        /* Edit Input Styles (not applied to <td>) */
         .leads-table input[data-field], .leads-table select[data-field] {
             width: 100%;
             padding: 8px;
@@ -678,7 +677,6 @@
             padding: 8px;
         }
 
-        /* Edit Controls Styles (not applied to <td>) */
         .edit-controls {
             display: flex;
             gap: 10px;
@@ -697,9 +695,8 @@
             cursor: pointer;
         }
 
-        /* Delete Button Styles */
         .delete-btn {
-            color: #dc3545; /* Red color for the garbage can icon */
+            color: #dc3545;
             font-size: 16px;
         }
 
@@ -939,7 +936,7 @@
             overflow-x: auto;
             overflow-y: auto;
             flex: 1;
-            max-height: calc(100vh - 300px); /* Adjusted to match Leads view */
+            max-height: calc(100vh - 300px);
             width: 100%;
         }
 
@@ -971,12 +968,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 15px; /* Reduced padding to save space */
+            padding: 10px 15px;
             border-bottom: 1px solid #eee;
             background-color: #fff;
             flex-shrink: 0;
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
-            gap: 10px; /* Add gap for wrapped elements */
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .call-history-table-header .search-bar {
@@ -984,27 +981,27 @@
             align-items: center;
             gap: 10px;
             background-color: #f0f2f5;
-            padding: 8px 12px; /* Reduced padding */
+            padding: 8px 12px;
             border-radius: 20px;
             flex: 1;
-            max-width: 300px; /* Reduced max-width to give more space */
-            min-width: 200px; /* Ensure it doesn't shrink too much */
+            max-width: 300px;
+            min-width: 200px;
         }
 
         .call-history-table-header .search-bar input {
             border: none;
             background: none;
-            font-size: 14px; /* Reduced font size */
+            font-size: 14px;
             outline: none;
             width: 100%;
         }
 
         .call-history-table-header .filters {
             display: flex;
-            gap: 10px; /* Reduced gap between filter elements */
+            gap: 10px;
             align-items: center;
-            flex: 2; /* Give filters more space */
-            flex-wrap: wrap; /* Allow filters to wrap if needed */
+            flex: 2;
+            flex-wrap: wrap;
         }
 
         .call-history-table-header .filters label {
@@ -1012,30 +1009,27 @@
             flex-direction: column;
             font-weight: 500;
             color: #666;
-            font-size: 12px; /* Reduced font size */
+            font-size: 12px;
             text-transform: uppercase;
         }
 
         .call-history-table-header .filters select,
         .call-history-table-header .filters input[type="date"] {
-            padding: 6px 10px; /* Reduced padding */
+            padding: 6px 10px;
             border-radius: 8px;
             border: 1px solid #ccc;
-            font-size: 12px; /* Reduced font size */
-            margin-top: 4px; /* Reduced margin */
-            min-width: 100px; /* Reduced min-width */
-            font-family: 'Inter', sans-serif;
-            background-color: #fff;
-            color: #333;
+            font-size: 12px;
+            margin-top: 4px;
+            min-width: 100px;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .call-history-table-header .filters input[type="date"]:focus,
-        .call-history-table-header .filters select:focus {
+        .call-history-table-header .filters select:focus,
+        .call-history-table-header .filters input[type="date"]:focus {
             border-color: #28a745;
             outline: none;
         }
 
-        /* Ensure date inputs have consistent appearance across browsers */
         .call-history-table-header .filters input[type="date"]::-webkit-calendar-picker-indicator {
             cursor: pointer;
             opacity: 0.6;
@@ -1047,20 +1041,20 @@
 
         .call-history-table-header .actions {
             display: flex;
-            gap: 8px; /* Reduced gap between buttons */
+            gap: 8px;
             flex-shrink: 0;
         }
 
         .call-history-table-header .actions button {
-            padding: 6px 12px; /* Reduced padding to make buttons smaller */
-            font-size: 12px; /* Reduced font size */
-            border-radius: 15px; /* Slightly smaller border-radius */
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 15px;
             border: none;
             background-color: #28a745;
             color: #fff;
             cursor: pointer;
             font-weight: 500;
-            white-space: nowrap; /* Prevent text wrapping */
+            white-space: nowrap;
         }
 
         .call-history-table-header .actions button:hover {
@@ -1083,7 +1077,7 @@
             position: sticky;
             top: 0;
             z-index: 1;
-            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); /* Subtle shadow when scrolling */
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
         }
 
         .call-history-table th, .call-history-table td {

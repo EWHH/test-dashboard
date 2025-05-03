@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cusana Login</title>
+    <title>Skailab Login</title>
+    <link rel="icon" type="image/png" href="resources/SkailabFavicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-100 flex items-center justify-center h-screen">
-    <div class="flex w-full max-w-5xl bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="flex w-full max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden" style="height: 550px;">
         <!-- Left Section: Login Form -->
-        <div class="w-1/2 p-10 flex flex-col justify-center">
+        <div class="flex-1 p-10 flex flex-col justify-center">
             <div class="flex justify-center mb-6">
-                <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
+                <img src="resources/SkailabLogo.png" alt="SKAILAB Logo" class="h-16 w-auto">
+                <!--<div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
                     <i class="fas fa-cube text-white text-2xl"></i>
-                </div>
+                </div> -->
             </div>
-            <h2 class="text-2xl font-bold text-center mb-2">Welcome Back to Cusana</h2>
+            <h2 class="text-2xl font-bold text-center mb-2">Welcome to SKAILAB</h2>
             <p class="text-gray-500 text-center mb-6">Enter your username and password to continue.</p>
             <form id="login-form" class="space-y-4">
                 <div>
@@ -45,71 +47,30 @@
             <p class="text-center text-sm text-gray-600 mt-4">Don't have an account? <a href="#" class="text-orange-500 hover:underline">Register</a></p>
         </div>
 
-        <!-- Right Section: Swipeable Carousel -->
-        <div class="w-1/2 bg-gray-900 text-white p-10 flex flex-col justify-between">
+        <!-- Right Section: Full Scrollable Carousel -->
+        <div class="w-[333px] bg-gray-900 text-white flex flex-col justify-between">
             <div class="overflow-hidden">
-                <h3 class="text-2xl font-bold mb-2">Transform Data into Cool Insights</h3>
-                <p class="text-gray-400 mb-6">Make informed decisions with Cusana's powerful analytics tools. Harness the power of data to drive your business forward with Cusana Analytics.</p>
                 <!-- Carousel Container -->
-                <div id="carousel" class="relative flex transition-transform duration-300 ease-in-out">
+                <div id="carousel" class="relative flex transition-transform duration-300 ease-in-out" style="height: 500px;">
                     <!-- Slide 1 -->
-                    <div class="min-w-full space-y-4">
-                        <div class="bg-gray-800 p-4 rounded-md">
-                            <p class="text-sm text-gray-400">Sales Targets</p>
-                            <p class="text-lg font-semibold">$3,415 / $4,000</p>
-                            <div class="w-full bg-gray-700 rounded-full h-2.5">
-                                <div class="bg-orange-500 h-2.5 rounded-full" style="width: 85%"></div>
-                            </div>
-                        </div>
-                        <div class="bg-gray-800 p-4 rounded-md">
-                            <p class="text-sm text-gray-400">Sales Revenue</p>
-                            <p class="text-lg font-semibold">$5,832</p>
-                            <p class="text-xs text-gray-500">Your revenue decreased by the last month $921</p>
-                        </div>
-                        <div class="bg-gray-800 p-4 rounded-md">
-                            <p class="text-sm text-gray-400">Closed Won by Type</p>
-                            <p class="text-lg font-semibold">$11,680</p>
-                            <p class="text-xs text-gray-500">This month's total closed won: $50,450</p>
-                        </div>
+                    <div class="min-w-full h-full">
+                        <img src="resources/Infomercial1New.jpg" alt="Smart Calls Seamless Service" class="w-full h-full object-contain">
                     </div>
                     <!-- Slide 2 -->
-                    <div class="min-w-full space-y-4">
-                        <div class="bg-gray-800 p-4 rounded-md">
-                            <p class="text-sm text-gray-400">Customer Segmentation</p>
-                            <p class="text-lg font-semibold">Total: 1,758</p>
-                            <p class="text-xs text-gray-500">Small Business: 1,650 | Enterprise: 424 | Individual: 458</p>
-                        </div>
-                        <div class="bg-gray-800 p-4 rounded-md">
-                            <p class="text-sm text-gray-400">Conversion Rates</p>
-                            <p class="text-lg font-semibold">70.3%</p>
-                            <p class="text-xs text-gray-500">+2.4% from last month</p>
-                        </div>
-                    </div>
-                    <!-- Slide 3 -->
-                    <div class="min-w-full space-y-4">
-                        <div class="bg-gray-800 p-4 rounded-md">
-                            <p class="text-sm text-gray-400">Task Completion Rate</p>
-                            <p class="text-lg font-semibold">92%</p>
-                            <p class="text-xs text-gray-500">+11% from last month</p>
-                        </div>
-                        <div class="bg-gray-800 p-4 rounded-md">
-                            <p class="text-sm text-gray-400">Active Users</p>
-                            <p class="text-lg font-semibold">1,234</p>
-                            <p class="text-xs text-gray-500">+15% from last month</p>
-                        </div>
+                    <div class="min-w-full h-full">
+                        <img src="resources/Infomercial2New.jpg" alt="Real-Time Rapid Insights" class="w-full h-full object-contain">
                     </div>
                 </div>
             </div>
             <!-- Dots for Swipeable Section -->
-            <div id="dots" class="flex justify-center space-x-2">
+            <div id="dots" class="flex justify-center space-x-2 py-4">
                 <span class="h-2 w-2 bg-white rounded-full cursor-pointer" data-index="0"></span>
                 <span class="h-2 w-2 bg-gray-600 rounded-full cursor-pointer" data-index="1"></span>
-                <span class="h-2 w-2 bg-gray-600 rounded-full cursor-pointer" data-index="2"></span>
             </div>
         </div>
     </div>
     <footer class="absolute bottom-4 text-sm text-gray-500">
-        © 2024 Cusana Inc. All rights reserved. | <a href="#" class="hover:underline">Privacy Policy</a> | <a href="#" class="hover:underline">Terms & Conditions</a>
+        © 2024 SKAILAB All rights reserved. | <a href="#" class="hover:underline">Privacy Policy</a> | <a href="#" class="hover:underline">Terms & Conditions</a>
     </footer>
 
     <script type="module" src="js/login.js"></script>
